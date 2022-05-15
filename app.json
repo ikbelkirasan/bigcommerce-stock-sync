@@ -3,5 +3,13 @@
   "description": "Handles bulk product stock updates in BigCommerce the custom Zapier integration",
   "repository": "https://github.com/ikbelkirasan/bigcommerce_bulk_updates_heroku_app",
   "logo": "https://cdn-icons-png.flaticon.com/512/5968/5968322.png",
-  "keywords": ["node"]
+  "keywords": ["node"],
+  "env": {
+    "BIGCOMMERCE_STORE_HASH": {
+      "description": "Your BigCommerce Store hash."
+    },
+    "BIGCOMMERCE_ACCESS_TOKEN": {
+      "description": "Your BigCommerce Store Access Token"
+    }
+  }
 }
