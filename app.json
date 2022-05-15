@@ -1,0 +1,7 @@
+{
+  "name": "BigCommerce Stock Sync",
+  "description": "Handles bulk product stock updates in BigCommerce the custom Zapier integration",
+  "repository": "https://github.com/ikbelkirasan/bigcommerce_bulk_updates_heroku_app",
+  "logo": "https://cdn-icons-png.flaticon.com/512/5968/5968322.png",
+  "keywords": ["node"]
+}
