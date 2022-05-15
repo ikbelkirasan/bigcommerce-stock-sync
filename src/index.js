@@ -9,4 +9,5 @@ const fastify = Fastify({
 
 fastify.post("/jobs", handleJob);
 
-fastify.listen(5000);
+const port = process.env.PORT || 5000;
+fastify.listen(port);
