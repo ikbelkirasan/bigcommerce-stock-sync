@@ -6,7 +6,7 @@ import { BigCommerceAPI } from "../api/bigcommerce.js";
 import { parseCSV } from "../parser/parser.js";
 
 function debug(...args) {
-  if (process.env.NODE_ENV.startsWith("test")) {
+  if (process.env.NODE_ENV?.startsWith("test")) {
     return;
   }
   return console.debug(...args);

@@ -9,9 +9,17 @@ export default async function handleJob(req) {
     .start()
 
     .finally(() => {
-      axios.post(callbackUrl, {
-        result: workflow.result,
-      });
+      axios
+        .post(callbackUrl, {
+          result: workflow.result,
+        })
+        .catch(error => {
+          console.error(
+            "Failed to send a request to the callback url: %s - Error: %s",
+            callbackUrl,
+            error.message,
+          );
+        });
     });
 
   const response = {
