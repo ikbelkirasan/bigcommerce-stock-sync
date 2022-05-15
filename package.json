@@ -1,0 +1,29 @@
+{
+  "name": "heroku_app",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "axios-retry": "^3.2.5",
+    "axios-retry-after": "^1.0.3",
+    "delay": "^5.0.0",
+    "dotenv": "^16.0.1",
+    "fastify": "^3.29.0",
+    "filedirname": "^2.7.0",
+    "lodash": "^4.17.21",
+    "p-map": "^5.3.0",
+    "papaparse": "^5.3.2",
+    "pino-pretty": "^7.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "jest": "^28.1.0",
+    "nock": "^13.2.4"
+  }
+}
