@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import config from "./config.js";
 import handleJob from "./routes/handleJob.js";
 
 const fastify = Fastify({
@@ -9,5 +10,5 @@ const fastify = Fastify({
 
 fastify.post("/jobs", handleJob);
 
-const port = process.env.PORT || 5000;
-fastify.listen(port);
+const { host, port } = config.web;
+fastify.listen(port, host);
