@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import config from "./config.js";
 import handleJob from "./routes/handleJob.js";
 
+const startDate = new Date();
 const { host, port } = config.web;
 
 const fastify = Fastify({
@@ -9,6 +10,12 @@ const fastify = Fastify({
     prettyPrint: true,
   },
 });
+
+fastify.get("/heartbeat", () => ({
+  status: "ok",
+  upSince: startDate.toISOString(),
+}));
+
 fastify.post("/jobs", handleJob);
 
 try {
