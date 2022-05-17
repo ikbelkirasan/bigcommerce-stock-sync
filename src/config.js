@@ -9,4 +9,7 @@ export default {
     host: process.env.HOST || "0.0.0.0",
     port: process.env.PORT || 5000,
   },
+  queue: {
+    secretKey: process.env.QUEUE_SECRET_KEY,
+  },
 };

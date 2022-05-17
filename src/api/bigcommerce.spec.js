@@ -1,6 +1,7 @@
 import nock from "nock";
-import { mockBigCommerceAPI } from "../test/mocks";
-import { BigCommerceAPI } from "./bigcommerce";
+import config from "../config.js";
+import { mockBigCommerceAPI } from "../test/mocks.js";
+import { BigCommerceAPI } from "./bigcommerce.js";
 
 describe("BigCommerce API", () => {
   const authData = {
@@ -38,5 +39,25 @@ describe("BigCommerce API", () => {
     const api = new BigCommerceAPI(authData);
     const response = await api.products.list();
     expect(response).toEqual([]);
+  });
+});
+
+describe("products", () => {
+  beforeAll(() => {
+    nock.disableNetConnect();
+    // nock.enableNetConnect();
+  });
+
+  it("should list products", async () => {
+    const api = new BigCommerceAPI({
+      authToken: config.bigCommerce.accessToken,
+      storeHash: config.bigCommerce.storeHash,
+    });
+
+    const products = await api.products.list({
+      // limit: 2,
+      include: "custom_fields",
+      include_fields: ["id", "sku", "name", "custom_fields"].join(","),
+    });
   });
 });

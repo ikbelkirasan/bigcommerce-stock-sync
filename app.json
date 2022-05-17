@@ -10,6 +10,9 @@
     },
     "BIGCOMMERCE_ACCESS_TOKEN": {
       "description": "Your BigCommerce Store Access Token"
+    },
+    "QUEUE_SECRET_KEY": {
+      "description": "UUID v4 secret key for the queue."
     }
   }
 }

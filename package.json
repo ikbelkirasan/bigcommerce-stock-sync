@@ -18,9 +18,12 @@
     "delay": "^5.0.0",
     "dotenv": "^16.0.1",
     "fastify": "^3.29.0",
+    "fastq": "^1.13.0",
     "filedirname": "^2.7.0",
     "lodash": "^4.17.21",
+    "p-debounce": "^4.0.0",
     "p-map": "^5.3.0",
+    "p-queue": "^7.2.0",
     "papaparse": "^5.3.2",
     "pino-pretty": "^7.6.1"
   },

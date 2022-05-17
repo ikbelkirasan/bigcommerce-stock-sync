@@ -18,11 +18,12 @@ class ProductsService extends BaseService {
     });
   }
 
-  async batchUpdates(data) {
+  async batchUpdates(data, params) {
     return this.root.request({
       method: "PUT",
       url: "/v3/catalog/products",
       data,
+      params,
     });
   }
 }

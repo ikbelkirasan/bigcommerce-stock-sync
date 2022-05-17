@@ -3,68 +3,19 @@ import pMap from "p-map";
 import config from "../config.js";
 import axios from "../axios.js";
 import { BigCommerceAPI } from "../api/bigcommerce.js";
+import { debug } from "../helpers.js";
 import { parseCSV } from "../parser/parser.js";
-
-function debug(...args) {
-  if (process.env.NODE_ENV?.startsWith("test")) {
-    return;
-  }
-  return console.debug(...args);
-}
-
-class StockProcessor {
-  constructor(rows, products) {
-    this.rows = rows;
-    this.products = products;
-  }
-
-  process() {
-    return this.getStock();
-  }
-
-  getStock() {
-    const countStock = (items, key) => {
-      return _.reduce(
-        items,
-        (count, item) => {
-          const stock = Number(item[key]);
-          return count + stock;
-        },
-        0,
-      );
-    };
-
-    const items = _.chain(this.rows)
-      .groupBy(item => item["Drug_id"])
-      .mapValues(groupItems => countStock(groupItems, "Stock"))
-      .map((stock, sku) => {
-        const product = _.find(this.products, product => product.sku === sku);
-        if (!product) {
-          return null;
-        }
-
-        return {
-          id: product.id,
-          sku,
-          inventory_level: stock,
-        };
-      })
-      .filter(Boolean)
-      .value();
-
-    return items;
-  }
-}
+import { StockProcessor } from "./stock.processor.js";
 
 export class Workflow {
-  constructor({ csvFileUrl }) {
+  constructor({ csvFileUrl, csvFile }) {
     this.bigCommerceAPI = new BigCommerceAPI({
       storeHash: config.bigCommerce.storeHash,
       authToken: config.bigCommerce.accessToken,
     });
 
     this.csvFileUrl = csvFileUrl;
-    this.csvFile = null;
+    this.csvFile = csvFile;
     this.result = null;
   }
 
@@ -75,6 +26,12 @@ export class Workflow {
     } catch (error) {
       error.message = `Failed to download the CSV file. ${error.message}`;
       throw error;
+    }
+  }
+
+  async downloadFileIfNotExist() {
+    if (!this.csvFile && this.csvFileUrl) {
+      await this.downloadFile();
     }
   }
 
@@ -94,7 +51,12 @@ export class Workflow {
       const {
         data: products,
         meta: { pagination },
-      } = await this.bigCommerceAPI.products.list({ limit, page });
+      } = await this.bigCommerceAPI.products.list({
+        limit,
+        page,
+        include: "custom_fields",
+        include_fields: ["id", "sku", "name", "custom_fields"].join(","),
+      });
 
       allProducts.push(...products);
 
@@ -111,7 +73,18 @@ export class Workflow {
     const responses = await pMap(
       batches,
       async batch => {
-        const { data } = await this.bigCommerceAPI.products.batchUpdates(batch);
+        const { data } = await this.bigCommerceAPI.products.batchUpdates(
+          batch,
+          {
+            include_fields: [
+              "id",
+              "sku",
+              "name",
+              "inventory_level",
+              "custom_fields",
+            ].join(","),
+          },
+        );
         return data;
       },
       {
@@ -121,12 +94,6 @@ export class Workflow {
     );
 
     return _.flatten(responses);
-  }
-
-  formatResults(updatedProducts) {
-    return _.map(updatedProducts, product =>
-      _.pick(product, ["id", "name", "sku", "inventory_level"]),
-    );
   }
 
   async start() {
@@ -152,7 +119,7 @@ export class Workflow {
   async perform() {
     // Download the file
     debug("Downloading the CSV file...");
-    await this.downloadFile();
+    await this.downloadFileIfNotExist();
     debug("Downloaded the CSV file. Length: %d bytes", this.csvFile.length);
 
     // Parse updates from the CSV file
@@ -172,14 +139,10 @@ export class Workflow {
     debug("Processing done.");
 
     // Send updates in batches
-    debug("Will updates %d products...", updates.length);
+    debug("Will update %d products...", updates.length);
     const updatedProducts = await this.updateAllProducts(updates, 10);
-    debug("Updated %d products...", updates.length);
+    debug("Updated %d products...", updatedProducts.length);
 
-    // Reduce the number of returned fields
-    const result = this.formatResults(updatedProducts);
-    debug("Results: %d products...", result.length);
-
-    return result;
+    return updatedProducts;
   }
 }
