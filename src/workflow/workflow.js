@@ -29,7 +29,7 @@ export class Workflow {
     }
   }
 
-  async downloadFileIfNotExist() {
+  async downloadFileIfMissing() {
     if (!this.csvFile && this.csvFileUrl) {
       await this.downloadFile();
     }
@@ -119,7 +119,7 @@ export class Workflow {
   async perform() {
     // Download the file
     debug("Downloading the CSV file...");
-    await this.downloadFileIfNotExist();
+    await this.downloadFileIfMissing();
     debug("Downloaded the CSV file. Length: %d bytes", this.csvFile.length);
 
     // Parse updates from the CSV file

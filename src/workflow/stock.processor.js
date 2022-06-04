@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 
 export class StockProcessor {
   constructor(rows, products) {
@@ -76,11 +77,17 @@ export class StockProcessor {
   };
 
   getExpiryDate = items => {
-    return _.chain(items)
+    const value = _.chain(items)
       .sortBy(item => _.toNumber(item["Stock"]))
       .reverse()
       .first()
       .get("ExpDate")
       .value();
+
+    if (!value) {
+      return null;
+    }
+
+    return moment(value).format("DD-MM-YYYY");
   };
 }
