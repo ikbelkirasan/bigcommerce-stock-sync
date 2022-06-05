@@ -77,17 +77,21 @@ export class StockProcessor {
   };
 
   getExpiryDate = items => {
-    const value = _.chain(items)
+    const item = _.chain(items)
       .sortBy(item => _.toNumber(item["Stock"]))
       .reverse()
       .first()
-      .get("ExpDate")
       .value();
 
-    if (!value) {
+    if (!item || _.toNumber(item["Stock"]) < 1) {
+      return "Out of Stock";
+    }
+
+    const expiryDate = item["ExpDate"];
+    if (!expiryDate) {
       return null;
     }
 
-    return moment(value).format("DD-MM-YYYY");
+    return moment(expiryDate).format("DD-MM-YYYY");
   };
 }
