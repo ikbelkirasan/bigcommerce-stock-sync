@@ -18,7 +18,9 @@ This app is used with a custom Zapier app to sync stock via a CSV file.
 | `BIGCOMMERCE_ACCESS_TOKEN` | Your Bigcommerce Access Token                                                                      |
 | `QUEUE_SECRET_KEY`         | UUID v4 secret key for the queue. Can be generated [here](https://www.uuidgenerator.net/version4). |
 
-|
-
 5. Click on **Deploy app** to start the deployment.
-6. Reconnect your Bigcommerce Zapier app with the generated deployment URL.
+6. Once done, click on **Manage App**.
+7. On the dashboard, right click on the **Open app** button and copy the deployment URL.
+8. Reconnect your Bigcommerce Zapier app with the deployment URL.
+
+That's it. Everything should be ready to go.
