@@ -69,7 +69,7 @@ export class StockProcessor {
     return _.reduce(
       items,
       (count, item) => {
-        const stock = Number(item[key]);
+        const stock = _.toInteger(item[key]);
         return count + stock;
       },
       0,

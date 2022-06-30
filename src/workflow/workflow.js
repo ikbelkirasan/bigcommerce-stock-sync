@@ -118,30 +118,59 @@ export class Workflow {
 
   async perform() {
     // Download the file
-    debug("Downloading the CSV file...");
-    await this.downloadFileIfMissing();
-    debug("Downloaded the CSV file. Length: %d bytes", this.csvFile.length);
+    try {
+      debug("Downloading the CSV file...");
+      await this.downloadFileIfMissing();
+      debug("Downloaded the CSV file. Length: %d bytes", this.csvFile.length);
+    } catch (error) {
+      debug("Failed to download the CSV file.", error.message);
+      throw error;
+    }
 
     // Parse updates from the CSV file
-    debug("Parsing CSV file...");
-    const rows = this.getRows();
-    debug("Parsed CSV file, %d rows.", rows.length);
+    let rows;
+    try {
+      debug("Parsing CSV file...");
+      rows = this.getRows();
+      debug("Parsed CSV file, %d rows.", rows.length);
+    } catch (error) {
+      debug("Failed to parse the CSV file.", error.message);
+      throw error;
+    }
 
     // Get all the products from BigCommerce store
-    debug("Fetching products...");
-    const products = await this.getAllProducts();
-    debug("Fetched products -> %d products found", products.length);
+    let products;
+    try {
+      debug("Fetching products...");
+      products = await this.getAllProducts();
+      debug("Fetched products -> %d products found", products.length);
+    } catch (error) {
+      debug("Failed to fetch products", error.message);
+      throw error;
+    }
 
     // Process the updates
-    debug("Processing...");
-    const processor = new StockProcessor(rows, products);
-    const updates = processor.process();
-    debug("Processing done.");
+    let updates;
+    try {
+      debug("Processing...");
+      const processor = new StockProcessor(rows, products);
+      updates = processor.process();
+      debug("Processing done.");
+    } catch (error) {
+      debug("Failed to process the products.", error.message);
+      throw error;
+    }
 
     // Send updates in batches
-    debug("Will update %d products...", updates.length);
-    const updatedProducts = await this.updateAllProducts(updates, 10);
-    debug("Updated %d products...", updatedProducts.length);
+    let updatedProducts;
+    try {
+      debug("Will update %d products...", updates.length);
+      updatedProducts = await this.updateAllProducts(updates, 10);
+      debug("Updated %d products...", updatedProducts.length);
+    } catch (error) {
+      debug("Failed to update products.", error.message);
+      throw error;
+    }
 
     return updatedProducts;
   }

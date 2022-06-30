@@ -42,6 +42,14 @@ export class BigCommerceAPI {
       },
     });
 
+    this.axios.interceptors.response.use(undefined, error => {
+      if (error.response && error.response.data) {
+        const errorMessage = error.response.data.title || error.message;
+        error.message = `[${error.response.status}] ${errorMessage}`;
+      }
+      throw error;
+    });
+
     this.axios.interceptors.response.use(
       undefined,
       retryAfter(this.axios, {
