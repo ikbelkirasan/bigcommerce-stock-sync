@@ -1,0 +1,14 @@
+services:
+  - name: bigcommerce-stock-sync
+    type: web
+    env: node
+    plan: free
+    buildCommand: yarn install --production
+    startCommand: node src/index.js
+    envVars:
+      - key: BIGCOMMERCE_STORE_HASH
+        sync: false
+      - key: BIGCOMMERCE_ACCESS_TOKEN
+        sync: false
+      - key: QUEUE_SECRET_KEY
+        sync: false
